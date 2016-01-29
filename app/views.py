@@ -1,19 +1,61 @@
 from itertools import chain
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, render_to_response
 from .forms import PrimerRegistroFORM,SegundoRegistroForm, OrderForm
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from .models import PrimerRegistro, SegundoRegistro, Productos, ProductOrder, Order
 from users.models import User
 from  django.core import serializers
+from io import BytesIO
+from reportlab.platypus import SimpleDocTemplate, Paragraph, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table
 import json
+from reportlab.lib.pagesizes import A4, landscape
 from decimal import Decimal
 
 
 # Create your views here.
+def generar_pdf(request, cliente_id=None):
+    cliente = get_object_or_404(Order, id=cliente_id)
+    response = HttpResponse(content_type='application/pdf')
+    pdf_name = "Orden_de_compra.pdf"
+    buff = BytesIO()
+    doc = SimpleDocTemplate(buff,
+                            pagesize=letter,
+                            rightMargin=10,
+                            leftMargin=10,
+                            topMargin=60,
+                            bottonMargin=18,
+                            )
+    doc.pagesize = landscape(A4)
+    order = []
+
+    styles = getSampleStyleSheet()
+    header = Paragraph("Orden de compra", styles['Heading1'])
+    fecha = Paragraph("Fecha:", styles['Heading2'])
+    order.append(header)
+    headings = ('Orden de compra', 'Fecha', 'Monto total', 'Usuario', 'Operador','nombre', 'precio','precio unitario','cantidad','total')
+    allorder = [(p.orden_de_compra, p.order_date, p.total_amount, p.user, p.operador, a.product, a.product.price, a.quantity, (a.product.price*a.quantity)) for p in Order.objects.filter(user = cliente_id) for a in ProductOrder.objects.filter(order__user= cliente_id)]
+
+    t = Table([headings] + allorder)
+    t.setStyle(TableStyle(
+        [
+            ('GRID', (0,0), (10, -1), 1, colors.dodgerblue),
+            ('LINEBELOW', (0,0), (-1,0), 2, colors.darkblue),
+            ('BACKGROUND', (0,0), (-1,0), colors.dodgerblue)
+        ]
+    ))
+
+    order.append(t)
+    doc.build(order)
+    response.write(buff.getvalue())
+    buff.close()
+    return response
 
 
 def index(request):
-
     return render(request, 'index.html',)
 
 def nota_remision(request):

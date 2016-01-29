@@ -41,6 +41,9 @@ urlpatterns = [
     url(r'^editar/segundo_registro/(?P<pk>\d+)', 'app.views.SegundoRegistroEdit', name='editar_segundo_registro'),
     url(r'^eliminar/(?P<pk>\d+)$', 'app.views.SegundoRegistroDelete', name='eliminar_segundo_registro'),
 
+    url(r'^pdf/(?P<cliente_id>\d+)/', 'app.views.generar_pdf', name='pdf')
+
+
 ]
 
 
