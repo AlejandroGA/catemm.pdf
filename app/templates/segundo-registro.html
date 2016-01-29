@@ -2,13 +2,23 @@
 
 {% block css_add %}
     <style>
-    .True{
-        color: darkgreen;
+    .True span  {
+      display: none;
     }
-    .False{
-        color: #e74c3c;
+    .True:after {
+        color: green;
+      content: "Completo";
     }
 
+
+
+    .False span  {
+      display: none;
+    }
+    .False:after {
+      color: red;
+      content: "Incompleto";
+    }
     </style>
     {% load staticfiles %}
     <script src="{% static 'js/datatables.min.js' %}"></script>
@@ -19,6 +29,10 @@
     </script>
 {% endblock %}
 {% block contenido %}
+
+
+
+
     <button class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Agregar Cliente</button>
     <hr>
     <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
@@ -32,8 +46,10 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form.as_p }}
-                    <div class="divider"></div>
+                    <hr>
+                    <div class=" col-sm-offset-2 col-sm-2"></div>
                     <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
                     <hr>
                 </form>
             </div><div class="col-md-4 col-sm-2"></div>
@@ -64,9 +80,9 @@
              <td>{{ mi_cliente.cliente }}</td>
              <td>{{ mi_cliente.caratula }}</td>
              <td>{{ mi_cliente.numero_tarjeta }}</td>
-             <td class="{{ mi_cliente.tarjeta_entregada }}">{{ mi_cliente.tarjeta_entregada }}</td>
-             <td class="{{ mi_cliente.tarjeta_activa }}">{{ mi_cliente.tarjeta_activa }}</td>
-             <td class="{{ mi_cliente.tarjeta_con_fondos }}">{{ mi_cliente.tarjeta_con_fondos }}</td>
+             <td class="{{ mi_cliente.tarjeta_entregada }}"><span>{{ mi_cliente.tarjeta_entregada }}</span></td>
+             <td class="{{ mi_cliente.tarjeta_activa }}"><span>{{ mi_cliente.tarjeta_activa }}</span></td>
+             <td class="{{ mi_cliente.tarjeta_con_fondos }}"><span>{{ mi_cliente.tarjeta_con_fondos }}</span></td>
              <td>{{ mi_cliente.credito }}</td>
             <td>
                 <div class="dropdown">

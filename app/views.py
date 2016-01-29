@@ -18,6 +18,7 @@ from reportlab.platypus import Table
 import json
 from reportlab.lib.pagesizes import A4, landscape
 from reportlab.platypus import SimpleDocTemplate, Image
+from datetime import datetime
 
 
 # Create your views here.
@@ -40,7 +41,7 @@ def generar_pdf(request, cliente_id=None):
 
     styles = getSampleStyleSheet()
     header = Paragraph("Orden de compra", styles['Heading1'])
-    fetch = [(f.order_date) for f in Order.objects.filter(user = cliente_id)]
+    fetch = [(f.order_date) for f in Order.objects.all() ]
     fecha = Paragraph("Fecha:", styles['Heading2'])
     order.append(im)
     order.append(header)
@@ -49,7 +50,7 @@ def generar_pdf(request, cliente_id=None):
     headings = ('Orden de compra', 'Fecha', 'Monto total', 'Usuario', 'Operador','Producto','precio unitario','cantidad','total')
     allorder = [(p.orden_de_compra, p.order_date, p.total_amount, p.user, p.operador, a.product, a.product.price, a.quantity, (a.product.price*a.quantity)) for p in Order.objects.filter(user = cliente_id) for a in ProductOrder.objects.filter(order__user= cliente_id)]
 
-    t = Table([headings] + allorder)
+    t = Table([headings] + allorder + fetch)
     t.setStyle(TableStyle(
         [
             ('GRID', (0,0), (10, -1), 1, colors.green),
