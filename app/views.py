@@ -22,7 +22,7 @@ from reportlab.platypus import SimpleDocTemplate, Image
 
 # Create your views here.
 def generar_pdf(request, cliente_id=None):
-    im = Image('media/ifes/logo.jpg', width=2*inch, height=2*inch)
+    im = Image('media/ifes/logo_opt.jpg', width=2*inch, height=2*inch)
     im.hAlign = 'CENTER'
     cliente = get_object_or_404(Order, id=cliente_id)
     response = HttpResponse(content_type='application/pdf')
