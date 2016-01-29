@@ -32,19 +32,21 @@ def generar_pdf(request, cliente_id=None):
                             pagesize=letter,
                             rightMargin=30,
                             leftMargin=60,
-                            topMargin=60,
-                            bottonMargin=18,
+                            topMargin=30,
+                            bottonMargin=10,
                             )
     doc.pagesize = landscape(A4)
     order = []
 
     styles = getSampleStyleSheet()
     header = Paragraph("Orden de compra", styles['Heading1'])
+    fetch = [(f.order_date) for f in Order.objects.filter(user = cliente_id)]
     fecha = Paragraph("Fecha:", styles['Heading2'])
     order.append(im)
     order.append(header)
     order.append(fecha)
-    headings = ('Orden de compra', 'Fecha', 'Monto total', 'Usuario', 'Operador','nombre', 'precio','precio unitario','cantidad','total')
+
+    headings = ('Orden de compra', 'Fecha', 'Monto total', 'Usuario', 'Operador','Producto','precio unitario','cantidad','total')
     allorder = [(p.orden_de_compra, p.order_date, p.total_amount, p.user, p.operador, a.product, a.product.price, a.quantity, (a.product.price*a.quantity)) for p in Order.objects.filter(user = cliente_id) for a in ProductOrder.objects.filter(order__user= cliente_id)]
 
     t = Table([headings] + allorder)
